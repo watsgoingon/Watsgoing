@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>what's up</title>
+<style>
+
+body {
+	background: #333;
+	overflow: hidden;
+}
+
+.isimsorgu {
+	border: 1px solid green;
+	border-radius: 25px;
+	z-index: 10;
+	position: absolute;
+	top: 20%;
+	bottom: 20%;
+	right: 10%;
+	left: 10%;
+}
+
+.blur {
+	position: absolute;
+	backdrop-filter: blur(5px);
+	width: 100%;
+	height: 100%;
+	z-index: 5;
+}
+
+div[class="yuvarlak"] {
+	position: absolute;
+	z-index: 3;
+	height: 75px;
+	width: 75px;
+	border: 2px solid black;
+	border-radius: 50%;
+	top: 10px;
+	left: 10px;
+}
+
+div[class="yuvarlak"] img {
+	width: 100%;
+	height: 100%;
+	border-radius: 50%;
+}
+
+button[class="tm"] {
+	z-index: 3;
+	display: inline-block;
+	height: 36px;
+	position: absolute;
+	right: 15px;
+	top: 29px;
+	border: none;
+	width: 45px;
+	border-radius: 5px;
+	font-size: 25px;
+}
+
+input[class="name"] {
+	z-index: 3;
+	position: absolute;
+	height: 30px;
+	width: 55%;
+	top: 28px;
+	left: 100px;
+}
+
+div[class="p1"] {
+	position: absolute;
+	display: inline-block;
+	top: 10px;
+	left: 100px;
+	z-index: 3;
+	font-size: 25px;
+	font-weight: bold;
+	letter-spacing: 1px;
+	color: dark;
+}
+
+div[class="z1"] {
+	display: flex;
+	height: 100px;
+	width: 100%;
+	color: #000;
+	background: #86C9F4;
+	border: none;
+	position: absolute;
+	top: 0;
+	right: 0;
+	left: 0;
+	z-index: 2;
+}
+
+div[class="z3"] {
+	display: flex;
+	height: 100px;
+	width: 100%;
+	color: #000;
+	background: #86C9F4;
+	border: none;
+	position: absolute;
+	right: 0;
+	left: 0;
+	bottom: 0;
+	z-index: 2;
+}
+
+div[class="resim"] {
+	position: absolute;
+	z-index: 1;
+	background-image: url('1.jpg');
+	background-size: cover;
+	background-position: center;
+	left: 0;
+	right: 0;
+	top: 100px;
+	bottom: 100px;
+}
+
+input[class="input"] {
+	border: none;
+	z-index: 3;
+	display: inline-block;
+	border-radius: 5px;
+	width: 75%;
+	height: 30px;
+	position: absolute;
+	bottom: 15px;
+}
+
+button[class="ok"] {
+	z-index: 3;
+	display: inline-block;
+	height: 36px;
+	position: absolute;
+	right: 25px;
+	bottom: 15px;
+	border: none;
+	width: 45px;
+	border-radius: 5px;
+	font-size: 25px;
+}
+
+div[class="ekranicin"] {
+	border: none;
+	position: absolute;
+	top: 110px;
+	bottom: 110px;
+	left: 0;
+	right: 0;
+	padding: 20px;
+	overflow-y: auto;
+	z-index: 3;
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+	
+}
+
+.profilButon {
+	margin-top: 5px;
+	cursor: pointer;
+}
+
+.bagımsızmesaj {
+	overflow-wrap: break-word;
+	border: none;
+	background-color: #ADD8E6;
+	min-height: 30px;
+	max-height: 110px;
+	min-width: 40px;
+	max-width: 70%;
+	border-radius: 20px;
+	z-index: 3;
+	padding: 10px 15px;
+	display: inline-block;
+	align-items: center;
+	word-break: break-word;
+	width: fit-content;
+}
+
+.bagımsızmesaj::after {}
+	content: "";
+	display: block;
+}
+	
+.mesaj-sahibi {
+  display: block;
+  font-size: 12px;
+  color: #555;
+  margin-top: 5px;
+  text-align: left;
+  font-style: italic;
+}
+
+.mesajksm {
+	display: flex;
+	justify-content: space-between;
+	margin-top; 5px;
+	font-size: 12px;
+	color: #555;
+	font-style: italic;
+}
+
+.mesaj-sahibi {
+	text-align: left;
+}
+
+.mesaj-tarihi {
+	text-align: right;
+}
+
+</style>
+</head>
+<body> 
+
+
+	<div class="ust">
+		<div class="z1"></div>
+		<div class="yuvarlak" onclick="document.getElementById('profilInput').click()">
+			<img id="ProfilResmi" src="anonim.PNG">
+			<input type="file" id="profilInput" accept="image/*" style="display: none;" onchange="profilYukle(event)">
+		</div>
+		
+		<div id="javaicin" class="javaicin">
+		<button class="tm" onclick="isimGosterme()">➤</button>
+		<input type="text" class="name" placeholder="Lütfen İsminizi Giriniz" id="java" required>
+			
+		</div>
+		
+		<div class="p1">
+				<p id="görünen" class="p"></p>
+			</div>
+		
+	</div>
+	
+	<div class="govde">
+		
+		<div class="resim"></div>
+		<div class="profiligoruntule">Profili Görüntüle</div>
+	</div>
+	
+	
+	
+	<div class="alt">
+		<div class="z3"></div>
+		<input id="javainput" class="input" placeholder="Lütfen gizli mesajınızı giriniz ;)">
+		<button onclick="javaok()" class="ok">➤</button>
+		
+		<div id="ekranicin" class="ekranicin"></div>
+	</div>
+	<div>
+	<button class="profilButon">Profili Görüntüle</button>
+	</div>
+	
+<script>
+function scrollToBottom() {
+	const ekran = document.querySelector('.ekranicin');
+	if (ekran) {
+		ekran.scrollTop = ekran.scrollHeight;
+	}
+}
+
+function profilYukle(event) {
+  const dosya = event.target.files[0];
+  if (dosya) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      document.getElementById("ProfilResmi").src = e.target.result;
+    };
+    reader.readAsDataURL(dosya);
+  }
+}
+
+function javaok() {
+  const input = document.getElementById("javainput");
+  const mesaj = input.value.trim();
+  if (mesaj === "") return;
+
+  const yenibirmesaj = document.createElement("div");
+  const isim = document.getElementById("görünen").innerText.trim();
+  yenibirmesaj.classList.add("bagımsızmesaj");
+
+  yenibirmesaj.innerHTML = `
+    </p>${mesaj}</p>
+    <div class="mesajksm">
+      <span class="mesaj-sahibi">${isim}</span>
+      <span class="mesaj-tarihi">${new Date().toLocaleTimeString()}</span>
+    </div>
+  `;
+
+  document.getElementById("ekranicin").appendChild(yenibirmesaj);
+  input.value = "";
+
+  scrollToBottom(); // Burada çağrılıyor
+}
+
+function isimGosterme() {
+  var isim = document.getElementById("java").value;
+  document.getElementById("javaicin").style.display = "none";
+  document.getElementById("görünen").innerText = isim;
+}
+
+</script>
+</body>
+</html>

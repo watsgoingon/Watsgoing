@@ -1,310 +1,449 @@
+# Firebase Entegreli Mesajlaşma Uygulaması
+
+Firebase yapılandırma bilgilerinizi kullanarak tam çalışan bir mesajlaşma uygulaması hazırladım. Aşağıdaki kodu kopyalayıp doğrudan kullanabilirsiniz:
+
+```html
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>what's up</title>
-<style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WhatsUp Mesajlaşma</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+        
+        .container {
+            width: 90%;
+            max-width: 1000px;
+            height: 90vh;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .header {
+            background: #128C7E;
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #075E54;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .avatar img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        
+        .username {
+            font-weight: 600;
+        }
+        
+        .status {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+        
+        .chat-container {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: #e5ddd5;
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%2309cf83' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
+        }
+        
+        .message {
+            max-width: 70%;
+            padding: 10px 15px;
+            margin-bottom: 15px;
+            border-radius: 15px;
+            position: relative;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .message.sent {
+            background: #DCF8C6;
+            margin-left: auto;
+            border-bottom-right-radius: 5px;
+        }
+        
+        .message.received {
+            background: white;
+            margin-right: auto;
+            border-bottom-left-radius: 5px;
+        }
+        
+        .message-info {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 5px;
+            font-size: 12px;
+            color: #8696a0;
+        }
+        
+        .sender-name {
+            font-weight: 600;
+            color: #128C7E;
+        }
+        
+        .input-area {
+            background: #f0f0f0;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .message-input {
+            flex: 1;
+            padding: 12px 15px;
+            border: none;
+            border-radius: 20px;
+            outline: none;
+            font-size: 14px;
+        }
+        
+        .send-btn {
+            background: #128C7E;
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .send-btn:hover {
+            background: #075E54;
+        }
+        
+        .login-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .login-form {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+        }
+        
+        .login-form h2 {
+            margin-bottom: 20px;
+            color: #128C7E;
+        }
+        
+        .login-input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            outline: none;
+        }
+        
+        .login-btn {
+            background: #128C7E;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+        
+        .login-btn:hover {
+            background: #075E54;
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #4CAF50;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 5px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            z-index: 1001;
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                width: 95%;
+                height: 95vh;
+            }
+            
+            .message {
+                max-width: 85%;
+            }
+        }
+    </style>
+    <!-- Firebase SDK (v9 modüler sürümü) -->
+    <script type="module">
+        // Firebase yapılandırması
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, onSnapshot, orderBy, query, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+        
+        const firebaseConfig = {
+            apiKey: "AIzaSyD0iWmzuwQv-lAn3ofHt1MAsZgW6Q8IzuI",
+            authDomain: "message-fca06.firebaseapp.com",
+            projectId: "message-fca06",
+            storageBucket: "message-fca06.firebasestorage.app",
+            messagingSenderId: "417792873183",
+            appId: "1:417792873183:web:a1f45f6ebe2fc37c868f6a",
+            measurementId: "G-271K31E98F"
+        };
 
-body {
-	background: #333;
-	overflow: hidden;
-}
-
-.isimsorgu {
-	border: 1px solid green;
-	border-radius: 25px;
-	z-index: 10;
-	position: absolute;
-	top: 20%;
-	bottom: 20%;
-	right: 10%;
-	left: 10%;
-}
-
-.blur {
-	position: absolute;
-	backdrop-filter: blur(5px);
-	width: 100%;
-	height: 100%;
-	z-index: 5;
-}
-
-div[class="yuvarlak"] {
-	position: absolute;
-	z-index: 3;
-	height: 75px;
-	width: 75px;
-	border: 2px solid black;
-	border-radius: 50%;
-	top: 10px;
-	left: 10px;
-}
-
-div[class="yuvarlak"] img {
-	width: 100%;
-	height: 100%;
-	border-radius: 50%;
-}
-
-button[class="tm"] {
-	z-index: 3;
-	display: inline-block;
-	height: 36px;
-	position: absolute;
-	right: 15px;
-	top: 29px;
-	border: none;
-	width: 45px;
-	border-radius: 5px;
-	font-size: 25px;
-}
-
-input[class="name"] {
-	z-index: 3;
-	position: absolute;
-	height: 30px;
-	width: 55%;
-	top: 28px;
-	left: 100px;
-}
-
-div[class="p1"] {
-	position: absolute;
-	display: inline-block;
-	top: 10px;
-	left: 100px;
-	z-index: 3;
-	font-size: 25px;
-	font-weight: bold;
-	letter-spacing: 1px;
-	color: dark;
-}
-
-div[class="z1"] {
-	display: flex;
-	height: 100px;
-	width: 100%;
-	color: #000;
-	background: #86C9F4;
-	border: none;
-	position: absolute;
-	top: 0;
-	right: 0;
-	left: 0;
-	z-index: 2;
-}
-
-div[class="z3"] {
-	display: flex;
-	height: 100px;
-	width: 100%;
-	color: #000;
-	background: #86C9F4;
-	border: none;
-	position: absolute;
-	right: 0;
-	left: 0;
-	bottom: 0;
-	z-index: 2;
-}
-
-div[class="resim"] {
-	position: absolute;
-	z-index: 1;
-	background-image: url('1.jpg');
-	background-size: cover;
-	background-position: center;
-	left: 0;
-	right: 0;
-	top: 100px;
-	bottom: 100px;
-}
-
-input[class="input"] {
-	border: none;
-	z-index: 3;
-	display: inline-block;
-	border-radius: 5px;
-	width: 75%;
-	height: 30px;
-	position: absolute;
-	bottom: 15px;
-}
-
-button[class="ok"] {
-	z-index: 3;
-	display: inline-block;
-	height: 36px;
-	position: absolute;
-	right: 25px;
-	bottom: 15px;
-	border: none;
-	width: 45px;
-	border-radius: 5px;
-	font-size: 25px;
-}
-
-div[class="ekranicin"] {
-	border: none;
-	position: absolute;
-	top: 110px;
-	bottom: 110px;
-	left: 0;
-	right: 0;
-	padding: 20px;
-	overflow-y: auto;
-	z-index: 3;
-	display: flex;
-	flex-direction: column;
-	gap: 20px;
-	
-}
-
-.profilButon {
-	margin-top: 5px;
-	cursor: pointer;
-}
-
-.bagımsızmesaj {
-	overflow-wrap: break-word;
-	border: none;
-	background-color: #ADD8E6;
-	min-height: 30px;
-	max-height: 110px;
-	min-width: 40px;
-	max-width: 70%;
-	border-radius: 20px;
-	z-index: 3;
-	padding: 10px 15px;
-	display: inline-block;
-	align-items: center;
-	word-break: break-word;
-	width: fit-content;
-}
-
-.bagımsızmesaj::after {}
-	content: "";
-	display: block;
-}
-	
-.mesaj-sahibi {
-  display: block;
-  font-size: 12px;
-  color: #555;
-  margin-top: 5px;
-  text-align: left;
-  font-style: italic;
-}
-
-.mesajksm {
-	display: flex;
-	justify-content: space-between;
-	margin-top; 5px;
-	font-size: 12px;
-	color: #555;
-	font-style: italic;
-}
-
-.mesaj-sahibi {
-	text-align: left;
-}
-
-.mesaj-tarihi {
-	text-align: right;
-}
-
-</style>
+        // Firebase'i başlat
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        
+        // DOM elementleri
+        const loginModal = document.getElementById('login-modal');
+        const usernameInput = document.getElementById('username-input');
+        const loginButton = document.getElementById('login-button');
+        const usernameDisplay = document.getElementById('username-display');
+        const avatarInitials = document.getElementById('avatar-initials');
+        const messageInput = document.getElementById('message-input');
+        const sendButton = document.getElementById('send-button');
+        const chatMessages = document.getElementById('chat-messages');
+        const notification = document.getElementById('notification');
+        
+        // Kullanıcı bilgileri
+        let currentUser = localStorage.getItem('chatUsername');
+        
+        // Sayfa yüklendiğinde
+        document.addEventListener('DOMContentLoaded', function() {
+            if (currentUser) {
+                // Kullanıcı zaten giriş yapmışsa
+                loginModal.style.display = 'none';
+                usernameDisplay.textContent = currentUser;
+                avatarInitials.textContent = currentUser.charAt(0).toUpperCase();
+                getMessages();
+            } else {
+                // Giriş yapılmamışsa giriş modalını göster
+                loginModal.style.display = 'flex';
+            }
+        });
+        
+        // Giriş butonu tıklama
+        loginButton.addEventListener('click', function() {
+            const username = usernameInput.value.trim();
+            if (username) {
+                currentUser = username;
+                localStorage.setItem('chatUsername', username);
+                loginModal.style.display = 'none';
+                usernameDisplay.textContent = username;
+                avatarInitials.textContent = username.charAt(0).toUpperCase();
+                getMessages();
+            }
+        });
+        
+        // Mesaj gönderme
+        sendButton.addEventListener('click', sendMessage);
+        messageInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+        
+        async function sendMessage() {
+            const messageText = messageInput.value.trim();
+            if (!messageText) return;
+            
+            if (!currentUser) {
+                showNotification('Lütfen önce kullanıcı adınızı girin');
+                loginModal.style.display = 'flex';
+                return;
+            }
+            
+            try {
+                // Firebase'e mesaj ekle
+                await addDoc(collection(db, "messages"), {
+                    text: messageText,
+                    sender: currentUser,
+                    timestamp: serverTimestamp()
+                });
+                
+                messageInput.value = '';
+                showNotification('Mesajınız gönderildi!');
+            } catch (error) {
+                console.error('Mesaj gönderilemedi: ', error);
+                showNotification('Mesaj gönderilemedi. Lütfen tekrar deneyin.');
+            }
+        }
+        
+        // Mesajları dinle
+        function getMessages() {
+            const q = query(collection(db, "messages"), orderBy("timestamp", "asc"));
+            
+            onSnapshot(q, (querySnapshot) => {
+                chatMessages.innerHTML = '';
+                querySnapshot.forEach((doc) => {
+                    const message = doc.data();
+                    displayMessage(message);
+                });
+                scrollToBottom();
+            });
+        }
+        
+        // Mesajı ekranda göster
+        function displayMessage(message) {
+            const messageDiv = document.createElement('div');
+            const isCurrentUser = message.sender === currentUser;
+            
+            messageDiv.classList.add('message');
+            messageDiv.classList.add(isCurrentUser ? 'sent' : 'received');
+            
+            let messageTime = 'Şimdi';
+            if (message.timestamp) {
+                try {
+                    messageTime = new Date(message.timestamp.toDate()).toLocaleTimeString('tr-TR', { 
+                        hour: '2-digit', 
+                        minute: '2-digit' 
+                    });
+                } catch (e) {
+                    console.log("Zaman dönüştürme hatası:", e);
+                }
+            }
+            
+            messageDiv.innerHTML = `
+                <div class="message-text">${message.text}</div>
+                <div class="message-info">
+                    <span class="sender-name">${message.sender}</span>
+                    <span class="message-time">${messageTime}</span>
+                </div>
+            `;
+            
+            chatMessages.appendChild(messageDiv);
+            scrollToBottom();
+        }
+        
+        // Bildirim göster
+        function showNotification(text) {
+            notification.textContent = text;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+        
+        // En altta kaydır
+        function scrollToBottom() {
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+    </script>
 </head>
-<body> 
-
-
-	<div class="ust">
-		<div class="z1"></div>
-		<div class="yuvarlak" onclick="document.getElementById('profilInput').click()">
-			<img id="ProfilResmi" src="anonim.PNG">
-			<input type="file" id="profilInput" accept="image/*" style="display: none;" onchange="profilYukle(event)">
-		</div>
-		
-		<div id="javaicin" class="javaicin">
-		<button class="tm" onclick="isimGosterme()">➤</button>
-		<input type="text" class="name" placeholder="Lütfen İsminizi Giriniz" id="java" required>
-			
-		</div>
-		
-		<div class="p1">
-				<p id="görünen" class="p"></p>
-			</div>
-		
-	</div>
-	
-	<div class="govde">
-		
-		<div class="resim"></div>
-		<div class="profiligoruntule">Profili Görüntüle</div>
-	</div>
-	
-	
-	
-	<div class="alt">
-		<div class="z3"></div>
-		<input id="javainput" class="input" placeholder="Lütfen gizli mesajınızı giriniz ;)">
-		<button onclick="javaok()" class="ok">➤</button>
-		
-		<div id="ekranicin" class="ekranicin"></div>
-	</div>
-	<div>
-	<button class="profilButon">Profili Görüntüle</button>
-	</div>
-	
-<script>
-function scrollToBottom() {
-	const ekran = document.querySelector('.ekranicin');
-	if (ekran) {
-		ekran.scrollTop = ekran.scrollHeight;
-	}
-}
-
-function profilYukle(event) {
-  const dosya = event.target.files[0];
-  if (dosya) {
-    const reader = new FileReader();
-    reader.onload = function(e) {
-      document.getElementById("ProfilResmi").src = e.target.result;
-    };
-    reader.readAsDataURL(dosya);
-  }
-}
-
-function javaok() {
-  const input = document.getElementById("javainput");
-  const mesaj = input.value.trim();
-  if (mesaj === "") return;
-
-  const yenibirmesaj = document.createElement("div");
-  const isim = document.getElementById("görünen").innerText.trim();
-  yenibirmesaj.classList.add("bagımsızmesaj");
-
-  yenibirmesaj.innerHTML = `
-    </p>${mesaj}</p>
-    <div class="mesajksm">
-      <span class="mesaj-sahibi">${isim}</span>
-      <span class="mesaj-tarihi">${new Date().toLocaleTimeString()}</span>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="user-info">
+                <div class="avatar" id="user-avatar">
+                    <span id="avatar-initials">K</span>
+                </div>
+                <div>
+                    <div class="username" id="username-display">Kullanıcı</div>
+                    <div class="status" id="status">Çevrimiçi</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="chat-container" id="chat-messages">
+            <div class="message received">
+                <div class="message-text">Merhaba! Mesajlaşma uygulamasına hoş geldiniz.</div>
+                <div class="message-info">
+                    <span class="sender-name">Sistem</span>
+                    <span class="message-time">Şimdi</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="input-area">
+            <input type="text" class="message-input" id="message-input" placeholder="Bir mesaj yazın...">
+            <button class="send-btn" id="send-button">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="22" y1="2" x2="11" y2="13"></line>
+                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                </svg>
+            </button>
+        </div>
     </div>
-  `;
-
-  document.getElementById("ekranicin").appendChild(yenibirmesaj);
-  input.value = "";
-
-  scrollToBottom(); // Burada çağrılıyor
-}
-
-function isimGosterme() {
-  var isim = document.getElementById("java").value;
-  document.getElementById("javaicin").style.display = "none";
-  document.getElementById("görünen").innerText = isim;
-}
-
-</script>
+    
+    <div class="login-modal" id="login-modal">
+        <div class="login-form">
+            <h2>WhatsUp'a Hoş Geldiniz</h2>
+            <input type="text" class="login-input" id="username-input" placeholder="Kullanıcı adınız">
+            <button class="login-btn" id="login-button">Sohbete Başla</button>
+        </div>
+    </div>
+    
+    <div class="notification" id="notification">Mesajınız gönderildi!</div>
 </body>
 </html>
